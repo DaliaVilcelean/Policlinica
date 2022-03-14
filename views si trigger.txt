@@ -1,0 +1,29 @@
+
+DROP VIEW if EXISTS Program_Angajat;
+
+CREATE VIEW Program_Angajat AS
+SELECT U.Nume as 'Nume', U.Prenume as 'Prenume', O.ziua as 'Data', O.ora_s as 'Ora_Inceput', O.ora_f as 'Ora_Sfarsit'
+FROM orar_generic O, utilizator U
+where U.idutilizator = O.idAngajat;
+
+DROP VIEW IF EXISTS Orar_programari;
+
+CREATE VIEW Orar_Programari AS 
+SELECT CONCAT(P.nume_pacient, ' ', P.prenume_pacient) AS 'Pacient', P.zi AS 'Data', P.ora AS 'Ora', P.durata AS 'Durata', 
+CONCAT(U.Nume, ' ', U.Prenume) AS 'medic'
+FROM programare P, medic M, utilizator U
+WHERE M.idmedic= U.idutilizator AND P.id_medic = M.idmedic;
+
+Triggere
+Acest trigger se activeaza dupa ce medicul si-a pus parafa pe un raport , asta insemnand ca a terminat consultatia si el devine disponibil. In tabela medic exista o variabila care poate lua doar valorile 0 sau 1 (0 – medicul este in timpul unei programari sau nu lucreaza , 1 – medicul este disponibil)
+DELIMITER //
+CREATE TRIGGER medic_disponibil AFTER UPDATE ON raport 
+	FOR EACH ROW
+		BEGIN
+    	IF parafat = 1 AND id_medic_consultatie = medic.idmedic THEN
+        UPDATE medic ON disponibil
+            SET disponibil = 1;
+		END IF;
+	END;
+DELIMITER ;
+

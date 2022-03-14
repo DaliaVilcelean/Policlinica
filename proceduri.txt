@@ -1,0 +1,40 @@
+CREATE PROCEDURE adaugareConcediu( id INT, data_inc date, data_f date )
+BEGIN
+	SELECT id 
+	FROM utilizator a 
+	WHERE
+		a.idutilizator = id INTO @id;
+	IF
+		( @id IS NOT NULL ) THEN
+		INSERT INTO concediu(iduser,inceput_concediu,sfarsit_concediu)
+		VALUES
+			( @id, data_inc, data_f );
+		
+	END IF;
+    END
+---------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE cautaUtilizator(numeU VARCHAR ( 45 ),prenumeU VARCHAR ( 45 ),functieU VARCHAR ( 45 ))
+BEGIN
+	SELECT * FROM utilizator  WHERE numeU = nume AND prenumeU = prenume AND functieU = functie ;
+END
+---------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE creare_cont(CNP int,Nume VARCHAR(45),Prenume VARCHAR(45),Numar_telefon int,Email VARCHAR(45),IBAN VARCHAR(45),nr_contract int,data_angajarii date,functie VARCHAR(45),nume_utilizator VARCHAR(45),parola VARCHAR(45))
+BEGIN
+INSERT INTO utilizator(CNP,Nume,Prenume,Numar_telefon,Email,IBAN,nr_contract,data_angajarii,functie,nume_utilizator,parola)
+VALUES(CNP,Nume,Prenume,Numar_telefon,Email,IBAN,nr_contract,data_angajarii,functie,nume_utilizator,parola);
+END
+---------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE date_medic(email1 varchar (100))
+begin
+select medic.idmedic, utilizator.Nume, utilizator.Prenume, medic.specialitatea, medic.grad, medic.competente, medic.titlu_stiintific,medic.post_didactic 
+from medic
+join utilizator on medic.idmedic=utilizator.idutilizator 
+where utilizator.Email=email1;
+end
+
+---------------------------------------------------------------------------------------------------------------------
+CREATE PROCEDURE date_despre_concediu(id int)
+BEGIN
+		SELECT u.Nume as 'Nume', u.Prenume as 'Prenume', c.inceput_concediu as 'dataInceput', c.sfarsit_concediu
+as 'dataSfarsit' from concediu c, utilizator u where c.iduser = id and u.idutilizator = id;
+end;
